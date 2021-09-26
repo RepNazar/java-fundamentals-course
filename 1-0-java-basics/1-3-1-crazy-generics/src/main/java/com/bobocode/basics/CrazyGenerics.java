@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * {@link CrazyGenerics} is an exercise class. It consists of classes, interfaces and methods that should be updated
@@ -28,8 +29,8 @@ public class CrazyGenerics {
      * @param <T> – value type
      */
     @Data
-    public static class Sourced { // todo: refactor class to introduce type parameter and make value generic
-        private Object value;
+    public static class Sourced<T> { // todo: refactor class to introduce type parameter and make value generic
+        private T value;
         private String source;
     }
 
@@ -40,11 +41,11 @@ public class CrazyGenerics {
      * @param <T> – actual, min and max type
      */
     @Data
-    public static class Limited {
+    public static class Limited<T extends Number> {
         // todo: refactor class to introduce type param bounded by number and make fields generic numbers
-        private final Object actual;
-        private final Object min;
-        private final Object max;
+        private final T actual;
+        private final T min;
+        private final T max;
     }
 
     /**
@@ -54,8 +55,9 @@ public class CrazyGenerics {
      * @param <T> – source object type
      * @param <R> - converted result type
      */
-    public interface Converter { // todo: introduce type parameters
+    public interface Converter<T, R> { // todo: introduce type parameters
         // todo: add convert method
+        R convert(T input);
     }
 
     /**
@@ -65,10 +67,10 @@ public class CrazyGenerics {
      *
      * @param <T> – value type
      */
-    public static class MaxHolder { // todo: refactor class to make it generic
-        private Object max;
+    public static class MaxHolder<T extends Comparable<T>> { // todo: refactor class to make it generic
+        private T max;
 
-        public MaxHolder(Object max) {
+        public MaxHolder(T max) {
             this.max = max;
         }
 
@@ -77,11 +79,13 @@ public class CrazyGenerics {
          *
          * @param val a new value
          */
-        public void put(Object val) {
-            throw new ExerciseNotCompletedException(); // todo: update parameter and implement the method
+        public void put(T val) {
+            if (val.compareTo(this.max) > 0) {
+                this.max = val;
+            }
         }
 
-        public Object getMax() {
+        public T getMax() {
             return max;
         }
     }
@@ -92,8 +96,8 @@ public class CrazyGenerics {
      *
      * @param <T> – the type of objects that can be processed
      */
-    interface StrictProcessor { // todo: make it generic
-        void process(Object obj);
+    interface StrictProcessor<T extends Serializable & Comparable<T>> { // todo: make it generic
+        T process(T obj);
     }
 
     /**
@@ -103,10 +107,10 @@ public class CrazyGenerics {
      * @param <T> – a type of the entity that should be a subclass of {@link BaseEntity}
      * @param <C> – a type of any collection
      */
-    interface CollectionRepository { // todo: update interface according to the javadoc
-        void save(Object entity);
+    interface CollectionRepository<T extends BaseEntity, C extends Collection<T>> { // todo: update interface according to the javadoc
+        void save(T entity);
 
-        Collection<Object> getEntityCollection();
+        C getEntityCollection();
     }
 
     /**
@@ -115,7 +119,7 @@ public class CrazyGenerics {
      *
      * @param <T> – a type of the entity that should be a subclass of {@link BaseEntity}
      */
-    interface ListRepository { // todo: update interface according to the javadoc
+    interface ListRepository<T extends BaseEntity> extends CollectionRepository<T, List<T>> { // todo: update interface according to the javadoc
     }
 
     /**
@@ -128,7 +132,12 @@ public class CrazyGenerics {
      *
      * @param <E> a type of collection elements
      */
-    interface ComparableCollection { // todo: refactor it to make generic and provide a default impl of compareTo
+    interface ComparableCollection<E extends Iterable<E>> extends Collection<E> {
+        default int compareTo(ComparableCollection<E> input){
+            return this.size() - input.size();
+        }
+
+        // todo: refactor it to make generic and provide a default impl of compareTo
     }
 
     /**
@@ -142,7 +151,7 @@ public class CrazyGenerics {
          *
          * @param list
          */
-        public static void print(List<Integer> list) {
+        public static void print(List<Number> list) {
             // todo: refactor it so the list of any type can be printed, not only integers
             list.forEach(element -> System.out.println(" – " + element));
         }
@@ -155,8 +164,8 @@ public class CrazyGenerics {
          * @param entities provided collection of entities
          * @return true if at least one of the elements has null id
          */
-        public static boolean hasNewEntities(Collection<BaseEntity> entities) {
-            throw new ExerciseNotCompletedException(); // todo: refactor parameter and implement method
+        public static boolean hasNewEntities(Collection<? extends BaseEntity> entities) {
+            return entities.stream().anyMatch(e -> e.getUuid() == null);
         }
 
         /**
@@ -168,8 +177,8 @@ public class CrazyGenerics {
          * @param validationPredicate criteria for validation
          * @return true if all entities fit validation criteria
          */
-        public static boolean isValidCollection() {
-            throw new ExerciseNotCompletedException(); // todo: add method parameters and implement the logic
+        public static boolean isValidCollection(Collection<? extends BaseEntity> entities, Predicate<BaseEntity> validationPredicate) {
+            return entities.stream().allMatch(validationPredicate);
         }
 
         /**
@@ -182,7 +191,7 @@ public class CrazyGenerics {
          * @param <T>          entity type
          * @return true if entities list contains target entity more than once
          */
-        public static boolean hasDuplicates() {
+        public static boolean hasDuplicates(Collection<? extends BaseEntity> entities, BaseEntity targetEntity) {
             throw new ExerciseNotCompletedException(); // todo: update method signature and implement it
         }
 
