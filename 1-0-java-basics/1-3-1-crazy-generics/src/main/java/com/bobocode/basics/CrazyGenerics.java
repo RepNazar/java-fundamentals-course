@@ -42,7 +42,6 @@ public class CrazyGenerics {
      */
     @Data
     public static class Limited<T extends Number> {
-        // todo: refactor class to introduce type param bounded by number and make fields generic numbers
         private final T actual;
         private final T min;
         private final T max;
@@ -55,8 +54,7 @@ public class CrazyGenerics {
      * @param <T> – source object type
      * @param <R> - converted result type
      */
-    public interface Converter<T, R> { // todo: introduce type parameters
-        // todo: add convert method
+    public interface Converter<T, R> {
         R convert(T input);
     }
 
@@ -136,8 +134,6 @@ public class CrazyGenerics {
         default int compareTo(ComparableCollection<E> input){
             return this.size() - input.size();
         }
-
-        // todo: refactor it to make generic and provide a default impl of compareTo
     }
 
     /**
@@ -151,8 +147,7 @@ public class CrazyGenerics {
          *
          * @param list
          */
-        public static void print(List<Number> list) {
-            // todo: refactor it so the list of any type can be printed, not only integers
+        public static void print(List<?> list) {
             list.forEach(element -> System.out.println(" – " + element));
         }
 
