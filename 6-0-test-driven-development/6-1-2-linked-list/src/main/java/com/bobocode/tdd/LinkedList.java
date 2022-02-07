@@ -3,6 +3,8 @@ package com.bobocode.tdd;
 
 import com.bobocode.util.ExerciseNotCompletedException;
 
+import java.util.Arrays;
+
 /**
  * {@link LinkedList} is a list implementation that is based on singly linked generic nodes. A node is implemented as
  * inner static class {@link Node<T>}.
@@ -10,6 +12,14 @@ import com.bobocode.util.ExerciseNotCompletedException;
  * @param <T> generic type parameter
  */
 public class LinkedList<T> implements List<T> {
+    public class Node<T> {
+        T value;
+        Node<T> next;
+
+        Node(T value){
+            this.value = value;
+        }
+    }
 
     /**
      * This method creates a list of provided elements
@@ -19,7 +29,9 @@ public class LinkedList<T> implements List<T> {
      * @return a new list of elements the were passed as method parameters
      */
     public static <T> List<T> of(T... elements) {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        LinkedList<T> list = new LinkedList<>();
+        Arrays.stream(elements).forEach(list::add);
+        return list;
     }
 
     /**
