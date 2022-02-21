@@ -8,5 +8,10 @@ package com.bobobode.cs;
  * @param <T> a generic type T
  */
 public class Node<T> {
-    // todo:
+    T value;
+    Node<T> next;
+
+    public Node(T value) {
+        this.value = value;
+    }
 }
