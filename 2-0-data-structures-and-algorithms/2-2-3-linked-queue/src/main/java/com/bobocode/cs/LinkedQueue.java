@@ -10,6 +10,19 @@ import com.bobocode.util.ExerciseNotCompletedException;
  * @param <T> a generic parameter
  */
 public class LinkedQueue<T> implements Queue<T> {
+    private static class Node<T> {
+        T value;
+        Node<T> next;
+
+        public Node(T value) {
+            this.value = value;
+        }
+    }
+
+    private int size = 0;
+
+    private Node<T> head;
+    private Node<T> tail;
 
     /**
      * Adds an element to the end of the queue.
@@ -17,7 +30,15 @@ public class LinkedQueue<T> implements Queue<T> {
      * @param element the element to add
      */
     public void add(T element) {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        Node<T> newOne = new Node<>(element);
+        if (isEmpty()) {
+            this.tail = newOne;
+            this.head = this.tail;
+        } else {
+            this.tail.next = newOne;
+            this.tail = newOne;
+        }
+        size++;
     }
 
     /**
@@ -26,7 +47,18 @@ public class LinkedQueue<T> implements Queue<T> {
      * @return an element that was retrieved from the head or null if queue is empty
      */
     public T poll() {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        if (isEmpty()) {
+            return null;
+        }
+        T val = head.value;
+        if (this.size == 1) {
+            head = null;
+            tail = null;
+        } else {
+            head = head.next;
+        }
+        size--;
+        return val;
     }
 
     /**
@@ -35,7 +67,7 @@ public class LinkedQueue<T> implements Queue<T> {
      * @return an integer value that is a size of queue
      */
     public int size() {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        return size;
     }
 
     /**
@@ -44,6 +76,6 @@ public class LinkedQueue<T> implements Queue<T> {
      * @return {@code true} if the queue is empty, returns {@code false} if it's not
      */
     public boolean isEmpty() {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        return size == 0;
     }
 }
