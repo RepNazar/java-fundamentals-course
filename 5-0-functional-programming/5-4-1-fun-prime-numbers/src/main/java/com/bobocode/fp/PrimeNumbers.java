@@ -1,10 +1,9 @@
 package com.bobocode.fp;
 
-import com.bobocode.util.ExerciseNotCompletedException;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.IntConsumer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -23,6 +22,11 @@ public class PrimeNumbers {
     private PrimeNumbers() {
     }
 
+    private static boolean isPrime(int x) {
+        return IntStream.rangeClosed(2, x - 1)
+                .noneMatch(value -> x % value == 0);
+    }
+
     /**
      * Generates an infinite int stream of prime numbers.
      * The stream values are 2, 3, 5,... and so on.
@@ -30,7 +34,8 @@ public class PrimeNumbers {
      * @return an infinite int stream of prime numbers
      */
     public static IntStream stream() {
-        throw new ExerciseNotCompletedException(); // todo: create an infinite stream of ints, then filter prime numbs
+        return IntStream.iterate(2, i -> i + 1)
+                .filter(PrimeNumbers::isPrime);
     }
 
     /**
@@ -40,7 +45,7 @@ public class PrimeNumbers {
      * @return an int stream of prime numbers with a specified size
      */
     public static IntStream stream(int size) {
-        throw new ExerciseNotCompletedException(); // todo: use the prev to generate a stream method but limit its size
+        return stream().limit(size);
     }
 
     /**
@@ -51,8 +56,7 @@ public class PrimeNumbers {
      * @return the sum of n prime numbers
      */
     public static int sum(int n) {
-        throw new ExerciseNotCompletedException(); // todo: use prev method and calculate the sum
-
+        return stream(n).sum();
     }
 
     /**
@@ -61,7 +65,9 @@ public class PrimeNumbers {
      * @return a list of collected prime numbers
      */
     public static List<Integer> list(int n) {
-        throw new ExerciseNotCompletedException(); // todo: collect prime numbers into the list
+        return stream(n)
+                .boxed()
+                .collect(Collectors.toList());
     }
 
     /**
@@ -71,12 +77,14 @@ public class PrimeNumbers {
      * @param consumer a logic that should be applied to the found prime number
      */
     public static void processByIndex(int idx, IntConsumer consumer) {
-        throw new ExerciseNotCompletedException(); // todo: find an element in the stream by index and process it
+        consumer.accept(stream(idx + 1)
+                .skip(idx)
+                .sum());
     }
 
     /**
-     * Creates a list of n prime numbers and returns a map where all of those prime numbers are groped. The key represents
-     * an amount of digits and the value is a corresponding list of all prime numbers.
+     * Creates a list of n prime numbers and returns a map where all of those prime numbers are grouped.
+     * The key represents an amount of digits and the value is a corresponding list of all prime numbers.
      * <p>
      * So if you will call this method for with argument 20, you will receive the following map:
      * {1=[2, 3, 5, 7], 2=[11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71]}
@@ -85,6 +93,13 @@ public class PrimeNumbers {
      * @return a map with prime number grouped by the amount of digits
      */
     public static Map<Integer, List<Integer>> groupByAmountOfDigits(int n) {
-        throw new ExerciseNotCompletedException(); // todo: group n prime numbers by the amount of digits
+        return stream(n)
+                .boxed()
+                .collect(Collectors.groupingBy(
+                        PrimeNumbers::digitNumber,
+                        Collectors.toList()));
+    }
+    private static int digitNumber(Integer i) {
+        return String.valueOf(i).length();
     }
 }
