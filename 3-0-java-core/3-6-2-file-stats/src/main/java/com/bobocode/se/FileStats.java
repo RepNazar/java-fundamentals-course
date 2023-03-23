@@ -1,6 +1,12 @@
 package com.bobocode.se;
 
-import com.bobocode.util.ExerciseNotCompletedException;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 /**
  * {@link FileStats} provides an API that allow to get character statistic based on text file. All whitespace characters
@@ -13,9 +19,25 @@ public class FileStats {
      * @param fileName input text file name
      * @return new FileStats object created from text file
      */
+    private final Path path;
+
     public static FileStats from(String fileName) {
-        throw new ExerciseNotCompletedException(); //todo
+        return new FileStats(fileName);
     }
+
+    public FileStats(String fileName) {
+        try {
+            URL url = FileStats.class.getClassLoader().getResource(fileName);
+            if (url == null) {
+                throw new FileStatsException("");
+            }
+            path = Path.of(url.toURI());
+        } catch (URISyntaxException e) {
+            throw new FileStatsException("");
+        }
+
+    }
+
 
     /**
      * Returns a number of occurrences of the particular character.
@@ -24,7 +46,16 @@ public class FileStats {
      * @return a number that shows how many times this character appeared in a text file
      */
     public int getCharCount(char character) {
-        throw new ExerciseNotCompletedException(); //todo
+        try (Stream<String> lines = Files.lines(path)) {
+            return (int) lines
+                    .map(String::chars)
+                    .flatMap(intStream -> intStream.mapToObj(value -> (char) value))
+                    .filter(c -> c != ' ')
+                    .filter(c -> c.equals(character))
+                    .count();
+        } catch (IOException e) {
+            throw new FileStatsException("");
+        }
     }
 
     /**
@@ -33,7 +64,17 @@ public class FileStats {
      * @return the most frequently appeared character
      */
     public char getMostPopularCharacter() {
-        throw new ExerciseNotCompletedException(); //todo
+        try (Stream<String> lines = Files.lines(path)) {
+            return lines
+                    .map(String::chars)
+                    .flatMap(intStream -> intStream.mapToObj(value -> (char) value))
+                    .filter(c -> c != ' ')
+                    .distinct()
+                    .max(Comparator.comparing(this::getCharCount))
+                    .orElseThrow(() -> new FileStatsException(""));
+        } catch (IOException e) {
+            throw new FileStatsException("");
+        }
     }
 
     /**
@@ -43,6 +84,14 @@ public class FileStats {
      * @return {@code true} if this character has appeared in the text, and {@code false} otherwise
      */
     public boolean containsCharacter(char character) {
-        throw new ExerciseNotCompletedException(); //todo
+        try (Stream<String> lines = Files.lines(path)) {
+            return lines
+                    .map(String::chars)
+                    .flatMap(intStream -> intStream.mapToObj(value -> (char) value))
+                    .filter(c -> c != ' ')
+                    .anyMatch(character1 -> character1 == character);
+        } catch (IOException e) {
+            throw new FileStatsException("");
+        }
     }
 }
