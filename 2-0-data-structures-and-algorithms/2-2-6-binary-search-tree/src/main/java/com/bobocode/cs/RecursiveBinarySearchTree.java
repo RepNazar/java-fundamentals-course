@@ -108,15 +108,32 @@ public class RecursiveBinarySearchTree<T extends Comparable<T>> implements Binar
 
     @Override
     public void inOrderTraversal(Consumer<T> consumer) {
-        traversHelper(root, consumer);
+        LinkedStack<Node<T>> stack = new LinkedStack<>();
+        Node<T> current = root;
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            while (current.left != null) {
+                current = current.left;
+                stack.push(current);
+            }
+            while (!stack.isEmpty()) {
+                current = stack.pop();
+                consumer.accept(current.value);
+                if (current.right != null) {
+                    current = current.right;
+                    stack.push(current);
+                    break;
+                }
+            }
+        }
     }
 
-    private void traversHelper(Node<T> current, Consumer<T> consumer){
-        if(current.left != null){
+    private void traversHelper(Node<T> current, Consumer<T> consumer) {
+        if (current.left != null) {
             traversHelper(current.left, consumer);
         }
         consumer.accept(current.value);
-        if(current.right != null){
+        if (current.right != null) {
             traversHelper(current.right, consumer);
         }
     }

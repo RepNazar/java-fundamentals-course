@@ -50,7 +50,7 @@ class RecursiveBinarySearchTreeTest {
             field.getName().toLowerCase().contains("right")
             && field.getType().getSimpleName().equals("Node");
 
-    private static final Integer[] someElements = {10, 9, 11, 8, 12, 7};
+    private static final Integer[] someElements = {6, 2, 7, 1, 5, 8, 4, 9, 3};
     
     private BinarySearchTree<Integer> tree = new RecursiveBinarySearchTree<>();
 

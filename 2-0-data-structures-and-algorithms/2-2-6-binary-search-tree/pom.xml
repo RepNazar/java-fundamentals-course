@@ -11,5 +11,12 @@
 
     <artifactId>2-2-6-binary-search-tree</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.bobocode</groupId>
+            <artifactId>2-2-2-stack</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>
