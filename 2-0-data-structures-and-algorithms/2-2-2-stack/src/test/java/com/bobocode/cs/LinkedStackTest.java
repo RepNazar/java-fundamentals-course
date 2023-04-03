@@ -27,20 +27,21 @@ class LinkedStackTest {
 
     private static final Predicate<Field> NODE_FIELD_PREDICATE = field ->
             field.getType().getSimpleName().equals(PROPER_CLASSNAME)
-            && field.getName().toLowerCase().contains("head")
-            || field.getName().toLowerCase().contains("first");
+                    && field.getName().toLowerCase().contains("head")
+                    || field.getName().toLowerCase().contains("first")
+                    || field.getName().toLowerCase().contains("top");
 
     private static final Predicate<Field> SIZE_FIELD_PREDICATE = field ->
             field.getName().toLowerCase().contains("size");
 
     private static final Predicate<Field> NODE_ELEMENT_FIELD_PREDICATE = field ->
             field.getName().toLowerCase().contains("element")
-            || field.getName().toLowerCase().contains("value")
-            || field.getName().toLowerCase().contains("item");
+                    || field.getName().toLowerCase().contains("value")
+                    || field.getName().toLowerCase().contains("item");
 
     private static final Predicate<Field> NODE_NEXT_FIELD_PREDICATE = field ->
             field.getType().getSimpleName().equals(PROPER_CLASSNAME)
-            && field.getName().toLowerCase().contains("next");
+                    && field.getName().toLowerCase().contains("next");
 
     private Stack<Integer> intStack = new LinkedStack<>();
 
