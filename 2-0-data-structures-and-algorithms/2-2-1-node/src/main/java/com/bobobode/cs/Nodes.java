@@ -2,6 +2,13 @@ package com.bobobode.cs;
 
 import com.bobocode.util.ExerciseNotCompletedException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 /**
  * A class that consists of static methods only and provides util methods for {@link Node}.
  * <p><p>
@@ -11,6 +18,7 @@ import com.bobocode.util.ExerciseNotCompletedException;
  * @author Taras Boychuk
  */
 public class Nodes {
+
     private Nodes() {
     }
 
@@ -22,7 +30,7 @@ public class Nodes {
      * @return a new instance of {@link Node}
      */
     public static <T> Node<T> create(T element) {
-        throw new ExerciseNotCompletedException(); // todo:
+        return new Node<>(element);
     }
 
     /**
@@ -33,7 +41,7 @@ public class Nodes {
      * @param <T>    a genetic type
      */
     public static <T> void link(Node<T> first, Node<T> second) {
-        throw new ExerciseNotCompletedException(); // todo:
+        first.next = second;
     }
 
     /**
@@ -46,7 +54,9 @@ public class Nodes {
      * @return a reference to a first node created based on firstElement
      */
     public static <T> Node<T> pairOf(T firstElement, T secondElement) {
-        throw new ExerciseNotCompletedException(); // todo:
+        Node<T> node = new Node<>(firstElement);
+        node.next = new Node<>(secondElement);
+        return node;
     }
 
     /**
@@ -60,7 +70,11 @@ public class Nodes {
      * @return a reference to the first node
      */
     public static <T> Node<T> closedPairOf(T firstElement, T secondElement) {
-        throw new ExerciseNotCompletedException(); // todo:
+        Node<T> firstNode = new Node<>(firstElement);
+        Node<T> secondNode = new Node<>(secondElement);
+        firstNode.next = secondNode;
+        secondNode.next = firstNode;
+        return firstNode;
     }
 
     /**
@@ -72,7 +86,22 @@ public class Nodes {
      * @return a reference to the first element of the chain
      */
     public static <T> Node<T> chainOf(T... elements) {
-        throw new ExerciseNotCompletedException(); // todo:
+        return getChain(elements, node -> {});
+    }
+
+    private static <T> Node<T> getChain(T[] elements, Consumer<Node<T>> lastNodeConsumer) {
+        Objects.requireNonNull(elements);
+        Objects.requireNonNull(elements[0]);
+
+        Node<T> temp = new Node<>(elements[0]);
+        Node<T> first = temp;
+        for (int i = 1; i < elements.length; i++) {
+            Node<T> tempSecond = new Node<>(elements[i]);
+            temp.next = tempSecond;
+            temp = tempSecond;
+        }
+        lastNodeConsumer.accept(temp);
+        return first;
     }
 
     /**
@@ -85,6 +114,10 @@ public class Nodes {
      * @return a reference to the first element of the chain
      */
     public static <T> Node<T> circleOf(T... elements) {
-        throw new ExerciseNotCompletedException(); // todo:
+        List<Node<T>> list = new ArrayList<>();
+        Node<T> first = getChain(elements, list::add);
+        Node<T> last = list.get(0);
+        last.next = first;
+        return first;
     }
 }
